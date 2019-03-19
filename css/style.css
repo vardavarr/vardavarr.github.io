@@ -1,9 +1,9 @@
 body {
-	background-color: #941031;
-	background-image: url("img/rehoboth.png");
+	background-color: #000;
+	background-image: url("../img/rehoboth.png");
 	background-position: center;
 	background-repeat: no-repeat;
-	background-size: cover;
+	background-size: fill;
 	font-family: Helvetica, Arial, sans-serif;
 }
 
