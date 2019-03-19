@@ -1,0 +1,47 @@
+body {
+	background-color: #941031;
+	background-image: url("img/rehoboth.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+a {
+	color: #24FA54;
+	text-decoration: none;
+}
+
+.content {
+	float: center;
+	font-family: Helvetica, Arial, sans-serif;
+	margin-right: 2%;
+}
+
+.header {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+.footer {
+	clear: both;
+}
+
+.navigation {
+	border: 2px;
+	border-color: black;
+	border-style: solid;
+	float: left;
+	height: 145px;
+	padding-left: 7px;
+	padding-right: 7px;
+	width: 90px;
+}
+
+.navigation .selected {
+	font-weight: bold;
+}
+
+.navigation ul {
+	list-style-type: none;
+	padding: 0px;
+}
