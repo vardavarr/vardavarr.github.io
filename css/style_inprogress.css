@@ -1,0 +1,20 @@
+body {
+	background: #000 url("../img/steps.jpg") no-repeat fixed center;
+	font-family: Times New Roman, Times, serif;
+}
+
+.container {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+}
+
+.header {
+	font-family: Times New Roman, Times, serif;
+	margin: 0px;
+	padding: 0px;
+}
+
+.footer {
+	clear: both;
+}

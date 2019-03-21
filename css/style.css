@@ -1,49 +1,49 @@
 a {
-	color: #24FA54;
-	text-shadow: 100%;
+	background-color: #333;
+	color: #fff;
 	text-decoration: none;
 }
 
 body {
-	background: #000 url("../img/rehoboth.png") no-repeat fixed center;
+	background-attachment: fixed;
+	background-color: #fff;
+	background-image: url("../img/rehoboth.png");
+	background-position: center;
+	background-repeat: no-repeat;
 	background-size: cover;
-	font-family: Helvetica, Arial, sans-serif;
-}
-
-.container {
-	margin: auto;
-	width: 90%;
+	font-family: Times New Roman, Times, serif;
 }
 
 .content {
-	padding: 0px;
-}
-
-.header {
-	font-family: Helvetica, Arial, sans-serif;
+	background-color: #000;
+	color: #fff;
+	font-family: Times New Roman, Times, serif;
+	width: 128px;
 }
 
 .footer {
-	clear: both;
+	background-color: #000;
+	color: #fff;
+	font-family: Times New Roman, Times, serif;
+	font-style: oblique;
+	margin-top: 20px;
+	width: 210px;
 }
 
-.navigation {
-	float: left;
-	height: 145px;
-	padding-left: 7px;
-	padding-right: 7px;
-	width: 90px;
-}
-
-.navigation .selected {
+.header {
+	background-color: #000;
+	color: #fff;
+	font-family: Times New Roman, Times, serif;
+	font-size: 50px;
 	font-weight: bold;
+	width: 185px;
 }
 
-.navigation ul {
-	list-style-type: none;
-	padding: 0px;
+.links {
+	font-size: 20px;
+	width: 64px;
 }
 
-.text {
-	
+p {
+	margin: auto;
 }
