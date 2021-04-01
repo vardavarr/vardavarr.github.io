@@ -1,0 +1,46 @@
+a:link {
+  color: white;
+  text-decoration: none;
+}
+a:visited {
+  color: white;
+  text-decoration: none;
+}
+a:hover {
+  color: red;
+  text-decoration: none;
+  text-shadow: 1px 1px #fff;
+}
+a:active {
+  color: white;
+  text-decoration: none;
+
+}
+html {
+	background-color: black;
+}
+ul {
+	color: white;
+	list-style-type: circle;
+}
+.answers-box {
+	border-style: double;
+	border-color: white;
+	color: white;
+	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0px;
+	text-align: left;
+	width: 500px;
+}
+.dialogue {
+	color: white;
+	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 50px;
+	padding-top: 10px;
+	text-align: center;
+	width: 850px;
+}

@@ -1,0 +1,53 @@
+a:link {
+  color: red;
+  font-weight: bold;
+  text-decoration: none;
+}
+a:visited {
+  color: red;
+  font-weight: bold;
+  text-decoration: none;
+}
+a:hover {
+  color: lightcoral;
+  font-weight: bold;
+  text-decoration: none;
+}
+a:active {
+  color: red;
+  font-weight: bold;
+  text-decoration: none;
+}
+h1, h2, h3 {
+	color: white;
+}
+html {
+	background: url(../images/brookline2.jpg) no-repeat center fixed;
+	background-color: black;
+	background-size: cover;
+}
+p {
+	color: white;
+}
+ul {
+	color: white;
+	list-style-type: none;
+}
+.container-1 {
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0px;
+	width: 1150px;
+}
+.container-2 {
+	border-color: red;
+	border-bottom-style: none;
+	border-left-style: double;
+	border-right-style: double;
+	border-top-style: none;
+	border-width: 3px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0px 10px 0px 10px;
+	width: 1150px;
+}
