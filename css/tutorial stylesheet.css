@@ -20,6 +20,7 @@ a:active {
 }
 h1, h2, h3 {
 	color: white;
+	font-family: "Times New Roman", Times, serif;
 }
 html {
 	background: url(../images/brookline2.jpg) no-repeat center fixed;
@@ -28,10 +29,7 @@ html {
 }
 p {
 	color: white;
-}
-ul {
-	color: white;
-	list-style-type: none;
+	font-family: "Times New Roman", Times, serif;
 }
 .container-1 {
 	margin-left: auto;
@@ -50,4 +48,98 @@ ul {
 	margin-right: auto;
 	padding: 0px 10px 0px 10px;
 	width: 1150px;
+}
+.fade-in-fast {
+	animation: fadeIn ease 3s;
+	-webkit-animation: fadeIn ease 3s;
+	-moz-animation: fadeIn ease 3s;
+	-o-animation: fadeIn ease 3s;
+	-ms-animation: fadeIn ease 3s;
+}
+@keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-moz-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+	}
+@-webkit-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-o-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-ms-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+.fade-in-medium {
+	animation: fadeIn ease 7s;
+	-webkit-animation: fadeIn ease 7s;
+	-moz-animation: fadeIn ease 7s;
+	-o-animation: fadeIn ease 7s;
+	-ms-animation: fadeIn ease 7s;
+}
+@keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-moz-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-webkit-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-o-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-ms-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
 }

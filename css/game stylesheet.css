@@ -24,9 +24,12 @@ ul {
 	list-style-type: circle;
 }
 .answers-box {
+	background-color: black;
 	border-style: double;
 	border-color: white;
 	color: white;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 16px;
 	font-weight: bold;
 	margin-left: auto;
 	margin-right: auto;
@@ -36,6 +39,8 @@ ul {
 }
 .dialogue {
 	color: white;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 22px;
 	font-weight: bold;
 	margin-left: auto;
 	margin-right: auto;
@@ -43,4 +48,61 @@ ul {
 	padding-top: 10px;
 	text-align: center;
 	width: 850px;
+}
+.dialogue span {
+	background-color: black;
+}
+.fade-in-fast {
+	animation: fadeIn ease 3s;
+	-webkit-animation: fadeIn ease 3s;
+	-moz-animation: fadeIn ease 3s;
+	-o-animation: fadeIn ease 3s;
+	-ms-animation: fadeIn ease 3s;
+}
+.fade-in-medium {
+	animation: fadeIn ease 7s;
+	-webkit-animation: fadeIn ease 7s;
+	-moz-animation: fadeIn ease 7s;
+	-o-animation: fadeIn ease 7s;
+	-ms-animation: fadeIn ease 7s;
+}
+@keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-moz-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+	}
+@-webkit-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-o-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
+}
+@-ms-keyframes fadeIn {
+	0% {
+		opacity:0;
+	}
+	100% {
+		opacity:1;
+	}
 }
