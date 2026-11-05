@@ -903,7 +903,16 @@
         kitBackdrop.className = "kit-backdrop";
         kitBackdrop.setAttribute("aria-label", "Close kit menu");
         kitBackdrop.addEventListener("click", closeKitMenu);
-        document.body.appendChild(kitBackdrop);
+        // The backdrop must live INSIDE #shell, not on <body>: the
+        // shell is its own stacking context (inline-size containment,
+        // plus the rotate transform on portrait phones), so a
+        // body-level fixed backdrop paints above the whole shell —
+        // including this menu — and swallows every tap meant for a
+        // menu item, making kits impossible to select. Inside the
+        // shell the menu's z-index (50) beats the backdrop's (40),
+        // exactly like the About/Notation modal backdrops, which are
+        // shell children for the same reason.
+        shell.appendChild(kitBackdrop);
         renderKit();
       }
       function closeKitMenu() {
