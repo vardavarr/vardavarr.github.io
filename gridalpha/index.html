@@ -3,7 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="Drum Rhythm Grid — a one-screen rhythm table for drum set. Paint hits on a beat grid, switch subdivisions without moving your hits, and play the pattern back with a General MIDI drum kit." />
     <link rel="icon" href="data:," />
     <title>Drum Rhythm Grid — Standalone</title>
@@ -12,30 +16,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
-        color-scheme: light dark;
-        --bg: #f3efe8;
-        --surface: #fffdf8;
-        --surface2: #ece7dc;
-        --text: #1c1917;
-        --dim: #78716c;
-        --border: #d6cfc2;
-        --accent: #d97706;
-        --accent-strong: #b45309;
-        --teal: #0f766e;
+        color-scheme: dark;
+        --bg: #0a0a0a;
+        --surface: #171717;
+        --surface2: #262626;
+        --text: #f5f5f5;
+        --dim: #b0b0b0;
+        --border: #757575;
+        --accent: #f5f5f5;
+        --accent-strong: #ffffff;
+        --fill-solid: #e24a4a;
+        --fill-lined: #f0a34c;
+        --fill-dotted: #1eaa58;
+        --fill-cross: #3eacfa;
+        --fill-rings: #b174dc;
+        --playhead: rgba(255, 255, 255, 0.22);
+        --playhead-strong: rgba(255, 255, 255, 0.32);
         --radius: 10px;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #141210;
-          --surface: #1e1b18;
-          --surface2: #29241f;
-          --text: #ece7df;
-          --dim: #a8a29e;
-          --border: #3a332c;
-          --accent: #f59e0b;
-          --accent-strong: #fbbf24;
-          --teal: #2dd4bf;
-        }
       }
       * { box-sizing: border-box; }
       html, body { height: 100%; }
@@ -66,7 +63,6 @@
         font-size: 22px; font-weight: 800; letter-spacing: -0.02em; padding: 0;
       }
       #patternName::placeholder { color: var(--dim); }
-      #saveState { flex-shrink: 0; padding-bottom: 3px; font-size: 12px; font-weight: 500; color: var(--dim); white-space: nowrap; }
 
       /* ── Fill palette ── */
       .palette { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
@@ -77,7 +73,7 @@
         border: 1px solid var(--border); background: var(--surface);
         border-radius: var(--radius); padding: 6px 4px;
       }
-      .tool-btn[aria-pressed="true"] { border-color: var(--teal); background: var(--surface2); box-shadow: 0 0 0 2px var(--teal); }
+      .tool-btn[aria-pressed="true"] { border-color: var(--text); background: var(--surface2); box-shadow: 0 0 0 2px var(--text); }
       .tool-preview { display: block; width: 44px; max-width: 100%; height: 22px; border-radius: 4px; border: 1px solid var(--border); }
       .tool-name { font-size: 11px; font-weight: 600; line-height: 1; }
 
@@ -89,7 +85,7 @@
       }
       .grid { display: grid; height: 100%; width: 100%; gap: 3px; }
       .playhead-cell { display: flex; align-items: flex-start; justify-content: center; }
-      .playhead-tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid var(--teal); }
+      .playhead-tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid #ffffff; }
       .corner {
         display: flex; align-items: center; overflow: hidden; border-radius: 4px;
         background: var(--surface2); padding: 0 6px;
@@ -97,7 +93,7 @@
       }
       .col-head { position: relative; display: flex; align-items: center; overflow: hidden; border-radius: 4px; background: var(--surface); }
       .col-head.beat { background: var(--surface2); }
-      .col-head.playing { background: var(--teal); color: #fff; }
+      .col-head.playing { background: var(--playhead-strong); color: #fff; }
       .col-head input {
         width: 100%; background: transparent; border: 0; outline: none; text-align: center;
         font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; font-weight: 500; color: var(--dim); padding: 0 2px;
@@ -111,7 +107,7 @@
         border: 0; border-radius: 999px; background: transparent; font-size: 9px; line-height: 1; color: var(--dim);
       }
       .row-label { display: flex; align-items: center; gap: 2px; min-height: 0; overflow: hidden; border-radius: 4px; background: var(--surface); padding: 0 4px; }
-      .row-label input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; font-size: 13px; font-weight: 600; padding: 0; }
+      .row-label input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; font-size: 15px; font-weight: 600; padding: 0; }
       .row-remove {
         flex-shrink: 0; width: 20px; height: 20px; padding: 0;
         display: flex; align-items: center; justify-content: center;
@@ -120,36 +116,39 @@
       .row-remove:disabled { opacity: 0.3; }
       .cell-wrap { min-height: 0; border-radius: 4px; padding: 2px; }
       .cell-wrap.beat { background: color-mix(in srgb, var(--surface2) 60%, transparent); }
-      .cell-wrap.playing { background: color-mix(in srgb, var(--teal) 25%, transparent); }
+      .cell-wrap.playing { background: var(--playhead); }
       .cell {
         display: block; width: 100%; height: 100%; min-height: 0; padding: 0;
         border: 1px solid var(--border); border-radius: 4px; touch-action: none;
       }
       .cell:active { transform: scale(0.95); }
 
-      /* Cell fills */
-      .cell-solid { background: var(--accent); border-color: var(--accent-strong); }
+      /* Cell fills — Palette A4: each fill distinguished by pattern AND
+         color (WCAG 1.4.1). Contrast vs #0A0A0A: Solid #E24A4A 5.0:1,
+         Lined #F0A34C 9.5:1, Dotted #1EAA58 6.5:1, Cross #3EACFA 8.0:1,
+         Rings #B174DC 6.0:1. */
+      .cell-solid { background: var(--fill-solid); border-color: var(--fill-solid); }
       .cell-lined {
         background-color: var(--surface);
-        background-image: repeating-linear-gradient(45deg, var(--accent) 0, var(--accent) 2px, transparent 2px, transparent 7px);
-        border-color: var(--accent);
+        background-image: repeating-linear-gradient(45deg, var(--fill-lined) 0, var(--fill-lined) 2px, transparent 2px, transparent 7px);
+        border-color: var(--fill-lined);
       }
       .cell-dotted {
         background-color: var(--surface);
-        background-image: radial-gradient(circle, var(--accent) 1.8px, transparent 1.9px);
-        background-size: 8px 8px; border-color: var(--accent);
+        background-image: radial-gradient(circle, var(--fill-dotted) 1.8px, transparent 1.9px);
+        background-size: 8px 8px; border-color: var(--fill-dotted);
       }
       .cell-crosshatch {
         background-color: var(--surface);
         background-image:
-          repeating-linear-gradient(45deg, var(--accent) 0, var(--accent) 2px, transparent 2px, transparent 7px),
-          repeating-linear-gradient(-45deg, var(--accent) 0, var(--accent) 2px, transparent 2px, transparent 7px);
-        border-color: var(--accent);
+          repeating-linear-gradient(45deg, var(--fill-cross) 0, var(--fill-cross) 2px, transparent 2px, transparent 7px),
+          repeating-linear-gradient(-45deg, var(--fill-cross) 0, var(--fill-cross) 2px, transparent 2px, transparent 7px);
+        border-color: var(--fill-cross);
       }
       .cell-rings {
         background-color: var(--surface);
-        background-image: radial-gradient(circle, transparent 2.6px, var(--accent) 2.8px, var(--accent) 4.4px, transparent 4.6px);
-        background-size: 11px 11px; border-color: var(--accent);
+        background-image: radial-gradient(circle, transparent 2.6px, var(--fill-rings) 2.8px, var(--fill-rings) 4.4px, transparent 4.6px);
+        background-size: 11px 11px; border-color: var(--fill-rings);
       }
       .cell-empty { background: var(--surface); }
 
@@ -165,18 +164,19 @@
       .round-btn:disabled { opacity: 0.4; }
       .tempo-val { width: 60px; text-align: center; font-size: 14px; font-weight: 700; }
       .beats-val { width: 20px; text-align: center; font-size: 16px; font-weight: 700; }
-      .play-btn { border: 0; border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; color: #fff; background: var(--teal); }
-      .play-btn.playing { background: var(--accent-strong); }
+      .play-btn { border: 0; border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; color: #0a0a0a; background: var(--text); }
+      .play-btn.playing { background: var(--fill-solid); color: #fff; }
       .seg { display: flex; overflow: hidden; border: 1px solid var(--border); border-radius: 999px; }
       .seg button { border: 0; background: var(--surface2); color: var(--text); padding: 7px 10px; font-size: 12px; font-weight: 600; font-family: "IBM Plex Mono", ui-monospace, monospace; }
-      .seg button[aria-pressed="true"] { background: var(--teal); color: #fff; }
+      .seg button[aria-pressed="true"] { background: var(--playhead-strong); color: #fff; }
       .pill-btn { border: 1px solid var(--border); border-radius: 999px; background: var(--surface); padding: 7px 12px; font-size: 12px; font-weight: 700; }
       .pill-btn:disabled { opacity: 0.4; }
-      .pill-btn.primary { border: 0; background: var(--accent); color: #fff; }
+      .pill-btn.primary { border: 0; background: var(--accent); color: #0a0a0a; }
       .pill-btn.dim { color: var(--dim); }
-      #aboutBtn { margin-left: auto; flex-shrink: 0; }
+      .strip-right { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+      .notation-btn { border: 0; background: var(--text); color: #0a0a0a; }
 
-      /* ── About popup ── */
+      /* ── Popups (About / Notation) ── */
       .modal-backdrop {
         position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
         background: rgba(0,0,0,0.5); padding: 16px;
@@ -186,9 +186,12 @@
         border: 1px solid var(--border); border-radius: var(--radius);
         background: var(--surface); padding: 16px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
       }
+      .modal.wide { max-width: 768px; }
       .modal h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+      .modal h3 { margin: 12px 0 0; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
       .modal p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; color: var(--dim); }
       .modal p.small { font-size: 12px; }
+      .modal p.sub { margin-top: 2px; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
       .modal-close {
         flex-shrink: 0; width: 32px; height: 32px; padding: 0; border: 1px solid var(--border); border-radius: 999px;
@@ -197,12 +200,21 @@
       }
       .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       .modal-actions .pill-btn { flex: 1; white-space: nowrap; text-align: center; }
-      .done-btn { width: 100%; margin-top: 10px; border: 0; border-radius: 999px; background: var(--accent); color: #fff; padding: 9px 16px; font-size: 14px; font-weight: 700; }
+      .done-btn { width: 100%; margin-top: 10px; border: 0; border-radius: 999px; background: var(--accent); color: #0a0a0a; padding: 9px 16px; font-size: 14px; font-weight: 700; }
+      .notation-wrap {
+        margin-top: 12px; overflow-x: auto;
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: var(--surface); color: var(--text);
+      }
+      .notation-wrap svg { display: block; }
+      .key-list { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 0; padding: 0; list-style: none; }
+      .key-list li { font-size: 12px; line-height: 1.55; color: var(--dim); }
+      .key-list b { font-weight: 600; color: var(--text); }
 
       @media (max-width: 560px) {
         .palette-label { display: none; }
         #patternName { font-size: 19px; }
-        .row-label input { font-size: 11px; }
+        .row-label input { font-size: 14px; }
         .tool-preview { height: 18px; }
       }
     </style>
@@ -213,7 +225,6 @@
       <section class="stage" aria-label="Rhythm grid stage">
         <div class="title-row">
           <input id="patternName" aria-label="Pattern name" placeholder="Name this beat" maxlength="80" />
-          <span id="saveState" aria-live="polite"></span>
         </div>
 
         <div class="palette" role="toolbar" aria-label="Fill tools">
@@ -252,7 +263,10 @@
             <button type="button" id="clearHits" class="pill-btn dim">Clear hits</button>
           </div>
 
-          <button type="button" id="aboutBtn" class="pill-btn" aria-label="About this app">About</button>
+          <div class="strip-right">
+            <button type="button" id="notationBtn" class="pill-btn notation-btn" aria-label="View pattern in standard notation">Notation</button>
+            <button type="button" id="aboutBtn" class="pill-btn" aria-label="About this app">About</button>
+          </div>
         </div>
       </section>
     </div>
@@ -412,16 +426,76 @@
       window.addEventListener("orientationchange", applyOrientation);
       applyOrientation();
 
+      /* ── Mobile browsers: fullscreen + landscape keyboard ──
+         Progressive enhancement for mobile browsers (mainly
+         Android/Chrome): request fullscreen (which hides the browser
+         address bar) and, where supported, lock the screen
+         orientation to landscape so the software keyboard follows
+         the landscape layout instead of opening portrait. Both APIs
+         require a user gesture, are Android/Chrome-only in practice,
+         and silently no-op where unsupported — including in
+         portrait-locked embedded views and on iOS. Nothing here
+         traps the user: fullscreen can always be exited by the
+         browser's own gesture or Back, and it is only ever requested
+         from a fresh user gesture (a tap, or focusing a voice-label
+         field). */
+      function isCoarseMobile() {
+        var coarse = typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches;
+        var mobileUa = /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent || "");
+        return coarse || mobileUa;
+      }
+      function tryMobileFullscreenLandscape() {
+        if (!isCoarseMobile()) return Promise.resolve();
+        var chain = Promise.resolve();
+        try {
+          if (!document.fullscreenElement && document.documentElement && typeof document.documentElement.requestFullscreen === "function") {
+            chain = chain.then(function () {
+              var el = document.documentElement;
+              var attempt = null;
+              try { attempt = el.requestFullscreen({ navigationUI: "hide" }); } catch (e) { attempt = null; }
+              if (attempt && typeof attempt.catch === "function") {
+                return attempt.catch(function () {
+                  try {
+                    var again = el.requestFullscreen();
+                    if (again && typeof again.catch === "function") return again.catch(function () {});
+                  } catch (e2) { /* unsupported — no-op */ }
+                });
+              }
+            });
+          }
+        } catch (e) { /* unsupported — no-op */ }
+        return chain.then(function () {
+          try {
+            if (typeof screen !== "undefined" && screen.orientation && typeof screen.orientation.lock === "function") {
+              var locked = screen.orientation.lock("landscape");
+              if (locked && typeof locked.catch === "function") locked.catch(function () {});
+            }
+          } catch (e) { /* unsupported — no-op */ }
+          // Scroll-collapse fallback for browsers that still show
+          // chrome: a tiny scroll hides some mobile address bars.
+          // Harmless here because the app shell is fixed and does
+          // not actually scroll.
+          try { window.scrollTo(0, 1); } catch (e) { /* no-op */ }
+        }).catch(function () { /* no-op */ });
+      }
+      // First tap on a phone: try fullscreen (hides the address bar).
+      // One-shot listener; silently does nothing where unsupported.
+      if (isCoarseMobile()) {
+        window.addEventListener("pointerdown", function () { tryMobileFullscreenLandscape(); }, { once: true });
+      }
+      // Focusing a voice-label field: try to make the keyboard
+      // follow the landscape layout (fullscreen + landscape lock).
+      function handleVoiceLabelFocus() { tryMobileFullscreenLandscape(); }
+
       /* ── DOM refs ── */
       var gridEl = document.getElementById("grid");
       var nameEl = document.getElementById("patternName");
-      var saveStateEl = document.getElementById("saveState");
       var playBtn = document.getElementById("playBtn");
       var tempoValEl = document.getElementById("tempoVal");
       var beatsValEl = document.getElementById("beatsVal");
 
       nameEl.value = pattern.name;
-      nameEl.addEventListener("input", function () { pattern.name = nameEl.value; save(false); updateSaveState(); });
+      nameEl.addEventListener("input", function () { pattern.name = nameEl.value; save(false); });
 
       /* ── Palette ── */
       var paletteEl = document.getElementById("paletteTools");
@@ -468,10 +542,6 @@
       /* ── Grid rendering ── */
       var playColumn = null;
       function hitCount() { var n = 0; pattern.cells.forEach(function (row) { row.forEach(function (v) { if (v !== 0) n++; }); }); return n; }
-      function updateSaveState() {
-        var n = hitCount();
-        saveStateEl.textContent = n > 0 ? n + " hit" + (n === 1 ? "" : "s") + " · saved on this device" : "Saved on this device";
-      }
       function render() {
         var colCount = pattern.columns.length;
         tempoValEl.textContent = tempo + " BPM";
@@ -486,9 +556,8 @@
         document.getElementById("clearHits").disabled = hitCount() === 0;
         renderSubSeg();
         renderPalette();
-        updateSaveState();
 
-        gridEl.style.gridTemplateColumns = "minmax(64px, 104px) repeat(" + colCount + ", minmax(0, 1fr))";
+        gridEl.style.gridTemplateColumns = "minmax(88px, 140px) repeat(" + colCount + ", minmax(0, 1fr))";
         gridEl.style.gridTemplateRows = "0.85rem 1.9rem repeat(" + pattern.rows.length + ", minmax(0, 1fr))";
         gridEl.innerHTML = "";
 
@@ -537,6 +606,7 @@
           inp.setAttribute("aria-label", "Row " + (r + 1) + " voice label");
           inp.maxLength = 30;
           inp.addEventListener("input", function () { pattern.rows[r] = inp.value; save(false); });
+          inp.addEventListener("focus", handleVoiceLabelFocus);
           var rm = document.createElement("button");
           rm.type = "button";
           rm.className = "row-remove";
@@ -794,6 +864,463 @@
       }
       playBtn.addEventListener("click", function () { if (isPlaying) stopPlayback(); else startPlayback(); });
 
+
+      /* ── Notation popup: read-only standard drum notation ──
+         Ported from the Muse app version's notation view. The grid
+         is an onset map: a filled cell says "a hit happens here".
+         Note values are NOT fixed by the grid subdivision — a note
+         lasts until the next hit in the same stem layer, or until
+         the end of the measure, so one beat can mix an 8th note
+         with two 16ths. Gaps before a layer's first hit become
+         rests. Hits are grouped per stem layer (hands up, feet
+         down), not per row. Non-solid fills are ghost notes
+         (smaller noteheads in parentheses), matching how playback
+         treats them as softer hits. Rendering is plain SVG
+         geometry drawn as a string. */
+      function escHtml(s) {
+        return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      }
+      function staffSpecForRow(label, rowIndex) {
+        var s = String(label || "").toLowerCase();
+        function has() { for (var i = 0; i < arguments.length; i++) if (s.indexOf(arguments[i]) !== -1) return true; return false; }
+        if (has("hat")) {
+          if (has("pedal", "foot")) return { step: -2, head: "x", stem: "down", matched: true };
+          return { step: 9, head: "x", stem: "up", matched: true };
+        }
+        if (has("crash")) return { step: 10, head: "x", stem: "up", matched: true };
+        if (has("splash", "china", "chinese")) return { step: 10, head: "x", stem: "up", matched: true };
+        if (has("ride")) return { step: 8, head: "x", stem: "up", matched: true };
+        if (has("bell")) return { step: 8, head: "x", stem: "up", matched: true };
+        if (has("cowbell")) return { step: 6, head: "normal", stem: "up", matched: true };
+        if (has("snare")) return { step: 5, head: "normal", stem: "up", matched: true };
+        if (has("clap")) return { step: 5, head: "normal", stem: "up", matched: true };
+        if (has("rim", "side stick", "sidestick", "stick")) return { step: 5, head: "x", stem: "up", matched: true };
+        if (has("floor")) return { step: has("high") ? 2 : 1, head: "normal", stem: "up", matched: true };
+        if (has("tom")) {
+          if (has("high", "hi")) return { step: 7, head: "normal", stem: "up", matched: true };
+          if (has("low")) return { step: 3, head: "normal", stem: "up", matched: true };
+          if (has("mid")) return { step: 4, head: "normal", stem: "up", matched: true };
+          return { step: 6, head: "normal", stem: "up", matched: true };
+        }
+        if (has("kick", "bass drum", "bassdrum")) return { step: 1, head: "normal", stem: "down", matched: true };
+        if (has("bass")) return { step: 1, head: "normal", stem: "down", matched: true };
+        if (has("drum")) return { step: 5, head: "normal", stem: "up", matched: true };
+        // Unmatched / custom voice: place by row order, higher rows
+        // higher on the staff, all stem-up with normal noteheads.
+        var step = Math.max(-1, 7 - rowIndex * 2);
+        return { step: step, head: "normal", stem: "up", matched: false };
+      }
+      function staffPositionName(step) {
+        switch (step) {
+          case 10: return "ledger line above the staff";
+          case 9: return "space above the staff";
+          case 8: return "top line";
+          case 7: return "4th space";
+          case 6: return "4th line";
+          case 5: return "3rd space";
+          case 4: return "3rd line";
+          case 3: return "2nd space";
+          case 2: return "2nd line";
+          case 1: return "1st space";
+          case 0: return "bottom line";
+          default: return step > 10 ? "above the staff" : "below the staff";
+        }
+      }
+      /* Durations: one beat = 12 ticks (LCM of the grid
+         subdivisions 1, 2, 3, 4), so every duration the grid can
+         produce lands on a standard value. */
+      function durForTicks(ticks) {
+        switch (ticks) {
+          case 48: return { ticks: ticks, kind: "whole", dotted: false, triplet: false, flags: 0 };
+          case 36: return { ticks: ticks, kind: "half", dotted: true, triplet: false, flags: 0 };
+          case 24: return { ticks: ticks, kind: "half", dotted: false, triplet: false, flags: 0 };
+          case 18: return { ticks: ticks, kind: "quarter", dotted: true, triplet: false, flags: 0 };
+          case 12: return { ticks: ticks, kind: "quarter", dotted: false, triplet: false, flags: 0 };
+          case 9: return { ticks: ticks, kind: "eighth", dotted: true, triplet: false, flags: 1 };
+          case 8: return { ticks: ticks, kind: "triplet-quarter", dotted: false, triplet: true, flags: 0 };
+          case 6: return { ticks: ticks, kind: "eighth", dotted: false, triplet: false, flags: 1 };
+          case 4: return { ticks: ticks, kind: "triplet-eighth", dotted: false, triplet: true, flags: 1 };
+          case 3: return { ticks: ticks, kind: "sixteenth", dotted: false, triplet: false, flags: 2 };
+          default: return { ticks: ticks, kind: "quarter", dotted: false, triplet: false, flags: 0 };
+        }
+      }
+      /* Split one interval (a note held until the next onset, or a
+         rest) into readable notation events: split at beat
+         boundaries, then merge runs of whole beats into half /
+         dotted-half notes where possible. */
+      function decomposeInterval(layer, kind, start, end, heads, sub, out, idPrefix) {
+        if (end <= start) return;
+        var chunks = [];
+        var pos = start;
+        while (pos < end) {
+          var beatEnd = (Math.floor(pos / sub) + 1) * sub;
+          var chunkEnd = Math.min(end, beatEnd);
+          chunks.push({ start: pos, slots: chunkEnd - pos });
+          pos = chunkEnd;
+        }
+        var merged = [];
+        var i = 0;
+        while (i < chunks.length) {
+          var ch = chunks[i];
+          if (!ch) break;
+          if (ch.slots === sub) {
+            var run = 0, j = i;
+            while (j < chunks.length && chunks[j] && chunks[j].slots === sub) { run += 1; j += 1; }
+            var remaining = run, curStart = ch.start;
+            while (remaining > 0) {
+              var take;
+              if (remaining === 1) take = 1;
+              else if (remaining === 2 || remaining === 4) take = 2;
+              else take = 3;
+              if (take > remaining) take = remaining;
+              merged.push({ start: curStart, slots: take * sub });
+              curStart += take * sub;
+              remaining -= take;
+            }
+            i = j;
+          } else {
+            merged.push(ch);
+            i += 1;
+          }
+        }
+        merged.forEach(function (m, idx) {
+          out.push({
+            id: idPrefix + "-" + idx,
+            kind: kind,
+            layer: layer,
+            start: m.start,
+            slots: m.slots,
+            dur: durForTicks(m.slots * (12 / sub)),
+            heads: kind === "note" ? heads : [],
+            tieFrom: kind === "note" && idx > 0,
+            tieTo: kind === "note" && idx < merged.length - 1,
+            beat: Math.floor(m.start / sub)
+          });
+        });
+      }
+      function buildLayerEvents(layer) {
+        var sub = Math.max(1, pattern.subdivision);
+        var total = pattern.columns.length;
+        var byCol = new Map();
+        pattern.rows.forEach(function (label, r) {
+          var spec = staffSpecForRow(label, r);
+          if (spec.stem !== layer) return;
+          pattern.columns.forEach(function (_, c) {
+            var v = (pattern.cells[r] && pattern.cells[r][c]) || 0;
+            if (v !== 0) {
+              var arr = byCol.get(c) || [];
+              arr.push({ row: r, label: label, step: spec.step, head: spec.head, ghost: v !== 1 });
+              byCol.set(c, arr);
+            }
+          });
+        });
+        var onsets = Array.from(byCol.keys()).sort(function (a, b) { return a - b; });
+        var events = [];
+        if (onsets.length === 0) return events; // caller draws a whole-measure rest
+        var first = onsets[0] || 0;
+        if (first > 0) decomposeInterval(layer, "rest", 0, first, [], sub, events, "rest-" + layer + "-pre");
+        onsets.forEach(function (col, idx) {
+          var end = idx + 1 < onsets.length ? onsets[idx + 1] : total;
+          decomposeInterval(layer, "note", col, end, byCol.get(col) || [], sub, events, "note-" + layer + "-" + col);
+        });
+        return events;
+      }
+      var HEAD_RX = 6.4, HEAD_RY = 4.4;
+      function buildNotation() {
+        var sub = Math.max(1, pattern.subdivision);
+        var totalSlots = Math.max(1, pattern.columns.length);
+        var totalBeats = totalSlots / sub;
+        var beatWidth = 116;
+        var slotWidth = beatWidth / sub;
+        var leftPad = 72, rightPad = 28;
+        var width = Math.max(380, leftPad + totalBeats * beatWidth + rightPad);
+        var staffTop = 88, lineGap = 10;
+        var staffBottom = staffTop + lineGap * 4;
+        var height = 208;
+        function yForStep(step) { return staffBottom - step * (lineGap / 2); }
+        function noteX(ev) { return leftPad + ev.start * slotWidth + Math.min(11, slotWidth * 0.38); }
+        function centerX(start, slots) { return leftPad + (start + slots / 2) * slotWidth; }
+        function stemXFor(ev) { return noteX(ev) + (ev.layer === "up" ? HEAD_RX - 0.8 : -(HEAD_RX - 0.8)); }
+        function headYs(ev) { return ev.heads.map(function (h) { return yForStep(h.step); }); }
+        var upEvents = buildLayerEvents("up");
+        var downEvents = buildLayerEvents("down");
+
+        /* Beam groups: consecutive flagged notes within one beat
+           and layer. */
+        var beamByEvent = new Map();
+        var beamGroups = [];
+        function collectBeams(events) {
+          var run = [];
+          function flush() {
+            var firstEv = run[0];
+            if (run.length >= 2 && firstEv) {
+              var isUp = firstEv.layer === "up";
+              var ys = [];
+              run.forEach(function (ev) { headYs(ev).forEach(function (y) { ys.push(y); }); });
+              var beamY = isUp
+                ? Math.max(26, Math.min.apply(null, ys) - 36)
+                : Math.min(height - 26, Math.max.apply(null, ys) + 36);
+              var group = { id: "beam-" + firstEv.id, layer: firstEv.layer, events: run.slice(), beamY: beamY };
+              run.forEach(function (ev) { beamByEvent.set(ev.id, group); });
+              beamGroups.push(group);
+            }
+            run = [];
+          }
+          events.forEach(function (ev) {
+            var candidate = ev.kind === "note" && ev.dur.flags >= 1;
+            var last = run[run.length - 1];
+            if (candidate && last && last.beat !== ev.beat) flush();
+            if (candidate) run.push(ev);
+            else flush();
+          });
+          flush();
+        }
+        collectBeams(upEvents);
+        collectBeams(downEvents);
+
+        /* Tuplet marks: one "3" per beat/layer with triplet notes. */
+        var tupletMarks = [];
+        function collectTuplets(events) {
+          var beatsMap = new Map();
+          events.forEach(function (ev) {
+            if (ev.kind === "note" && ev.dur.triplet) {
+              var arr = beatsMap.get(ev.beat) || [];
+              arr.push(ev);
+              beatsMap.set(ev.beat, arr);
+            }
+          });
+          beatsMap.forEach(function (evs, beat) {
+            var firstEv = evs[0];
+            if (!firstEv) return;
+            var isUp = firstEv.layer === "up";
+            var group = beamByEvent.get(firstEv.id);
+            var y;
+            if (group) y = isUp ? group.beamY - 8 : group.beamY + 15;
+            else {
+              var ys = [];
+              evs.forEach(function (ev) { headYs(ev).forEach(function (yy) { ys.push(yy); }); });
+              y = isUp ? Math.max(13, Math.min.apply(null, ys) - 44) : Math.min(height - 6, Math.max.apply(null, ys) + 50);
+            }
+            tupletMarks.push({ x: leftPad + beat * beatWidth + beatWidth / 2, y: y });
+          });
+        }
+        collectTuplets(upEvents);
+        collectTuplets(downEvents);
+
+        function ledgerLines(cx, step) {
+          var out = "", ls;
+          if (step >= 10) {
+            for (ls = 10; ls <= step; ls += 2) {
+              out += '<line x1="' + (cx - 10) + '" x2="' + (cx + 10) + '" y1="' + yForStep(ls) + '" y2="' + yForStep(ls) + '" stroke="currentColor" stroke-width="1.1"/>';
+            }
+          }
+          if (step <= -2) {
+            for (ls = -2; ls >= step; ls -= 2) {
+              out += '<line x1="' + (cx - 10) + '" x2="' + (cx + 10) + '" y1="' + yForStep(ls) + '" y2="' + yForStep(ls) + '" stroke="currentColor" stroke-width="1.1"/>';
+            }
+          }
+          return out;
+        }
+        function headShape(cx, cy, head, open, ghost) {
+          var rx = ghost ? HEAD_RX * 0.82 : HEAD_RX;
+          var ry = ghost ? HEAD_RY * 0.82 : HEAD_RY;
+          if (head === "x") {
+            var dx = rx * 0.95, dy = ry * 1.05;
+            return '<g stroke="currentColor" stroke-width="' + (ghost ? 1.6 : 1.9) + '" stroke-linecap="round">' +
+              '<line x1="' + (cx - dx) + '" y1="' + (cy - dy) + '" x2="' + (cx + dx) + '" y2="' + (cy + dy) + '"/>' +
+              '<line x1="' + (cx - dx) + '" y1="' + (cy + dy) + '" x2="' + (cx + dx) + '" y2="' + (cy - dy) + '"/></g>';
+          }
+          return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" transform="rotate(-16 ' + cx + ' ' + cy + ')" fill="' + (open ? "var(--surface)" : "currentColor") + '" stroke="' + (open ? "currentColor" : "none") + '" stroke-width="' + (open ? 1.5 : 0) + '"/>';
+        }
+        function ghostParens(cx, cy) {
+          return '<g stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.75">' +
+            '<path d="M ' + (cx - 9.5) + ' ' + (cy - 7.5) + ' C ' + (cx - 13.5) + ' ' + (cy - 3) + ' ' + (cx - 13.5) + ' ' + (cy + 3) + ' ' + (cx - 9.5) + ' ' + (cy + 7.5) + '"/>' +
+            '<path d="M ' + (cx + 9.5) + ' ' + (cy - 7.5) + ' C ' + (cx + 13.5) + ' ' + (cy - 3) + ' ' + (cx + 13.5) + ' ' + (cy + 3) + ' ' + (cx + 9.5) + ' ' + (cy + 7.5) + '"/></g>';
+        }
+        function flagPath(sx, sy, layer, second) {
+          var dir = layer === "up" ? 1 : -1;
+          var y0 = sy + (second ? dir * 8 : 0);
+          var d = layer === "up"
+            ? "M " + sx + " " + y0 + " C " + (sx + 9) + " " + (y0 + 3) + " " + (sx + 10.5) + " " + (y0 + 8) + " " + (sx + 7.5) + " " + (y0 + 14) + " C " + (sx + 6.5) + " " + (y0 + 9.5) + " " + (sx + 3.5) + " " + (y0 + 7) + " " + sx + " " + (y0 + 6)
+            : "M " + sx + " " + y0 + " C " + (sx + 9) + " " + (y0 - 3) + " " + (sx + 10.5) + " " + (y0 - 8) + " " + (sx + 7.5) + " " + (y0 - 14) + " C " + (sx + 6.5) + " " + (y0 - 9.5) + " " + (sx + 3.5) + " " + (y0 - 7) + " " + sx + " " + (y0 - 6);
+          return '<path d="' + d + '" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+        }
+        function restGlyph(ev) {
+          var cx = centerX(ev.start, ev.slots);
+          var cy = ev.layer === "up" ? yForStep(6) : yForStep(2);
+          var dot = ev.dur.dotted ? '<circle cx="' + (cx + 11) + '" cy="' + (cy - 2.5) + '" r="1.7" fill="currentColor"/>' : "";
+          switch (ev.dur.kind) {
+            case "whole":
+            case "half": {
+              var lineY = yForStep(4);
+              return '<g><rect x="' + (cx - 6.5) + '" y="' + (lineY - 4.6) + '" width="13" height="4.6" fill="currentColor"/>' + dot + "</g>";
+            }
+            case "quarter":
+              return '<g><path d="M -2.5 -11 C 3.5 -10 5 -6 0 -3.5 C 4.5 -1.5 4.5 3 -0.5 5 C -4.5 6.5 -4.5 10.5 -0.5 12" transform="translate(' + cx + ' ' + cy + ')" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>' + dot + "</g>";
+            case "eighth":
+            case "triplet-eighth":
+            case "triplet-quarter":
+              return '<g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="' + (cx - 1.5) + '" cy="' + (cy - 4) + '" r="2.3" fill="currentColor" stroke="none"/><line x1="' + (cx + 3.5) + '" y1="' + (cy - 7) + '" x2="' + (cx - 2.5) + '" y2="' + (cy + 9) + '"/>' + dot + "</g>";
+            case "sixteenth":
+              return '<g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="' + (cx - 2) + '" cy="' + (cy - 5) + '" r="2.1" fill="currentColor" stroke="none"/><circle cx="' + (cx - 3.5) + '" cy="' + (cy + 3) + '" r="2.1" fill="currentColor" stroke="none"/><line x1="' + (cx + 3.5) + '" y1="' + (cy - 8) + '" x2="' + (cx - 2) + '" y2="' + (cy + 10) + '"/><line x1="' + (cx + 0.5) + '" y1="' + (cy - 8.5) + '" x2="' + (cx - 5) + '" y2="' + (cy + 9.5) + '"/>' + dot + "</g>";
+            default:
+              return dot;
+          }
+        }
+        function renderNote(ev, next) {
+          var isUp = ev.layer === "up";
+          var evX = noteX(ev);
+          var group = beamByEvent.get(ev.id);
+          var sorted = ev.heads.slice().sort(function (a, b) { return b.step - a.step; });
+          // Displace heads a second apart (adjacent steps, or the
+          // same step) to the other side of the stem.
+          var placed = [];
+          sorted.forEach(function (head, idx) {
+            var prev = sorted[idx - 1];
+            var displaced = prev !== undefined && prev.step - head.step <= 1;
+            var cx = displaced ? evX + (isUp ? -(HEAD_RX * 1.85) : HEAD_RX * 1.85) : evX;
+            placed.push({ head: head, cx: cx, cy: yForStep(head.step) });
+          });
+          var ys = placed.map(function (p) { return p.cy; });
+          var topY = Math.min.apply(null, ys);
+          var bottomY = Math.max.apply(null, ys);
+          var stemX = stemXFor(ev);
+          var stemEnd = group ? group.beamY : isUp ? topY - 34 : bottomY + 34;
+          var open = ev.dur.kind === "half" || ev.dur.kind === "whole";
+          var out = "<g>";
+          out += '<line x1="' + stemX + '" x2="' + stemX + '" y1="' + (isUp ? bottomY : topY) + '" y2="' + stemEnd + '" stroke="currentColor" stroke-width="1.4"/>';
+          if (!group && ev.dur.flags >= 1) out += flagPath(stemX, stemEnd, ev.layer, false);
+          if (!group && ev.dur.flags >= 2) out += flagPath(stemX, stemEnd, ev.layer, true);
+          if (ev.tieTo && next && next.kind === "note") {
+            placed.forEach(function (p) {
+              var nHead = null;
+              next.heads.forEach(function (h) { if (h.step === p.head.step && !nHead) nHead = h; });
+              if (!nHead) return;
+              var nx = noteX(next);
+              var midX = (p.cx + nx) / 2;
+              var ty = isUp ? p.cy + 8.5 : p.cy - 8.5;
+              var bend = isUp ? 6 : -6;
+              out += '<path d="M ' + (p.cx + 7.5) + ' ' + ty + ' Q ' + midX + ' ' + (ty + bend) + ' ' + (nx - 7.5) + ' ' + ty + '" stroke="currentColor" stroke-width="1.3" fill="none"/>';
+            });
+          }
+          placed.forEach(function (p) {
+            out += "<g>" + ledgerLines(p.cx, p.head.step);
+            if (p.head.ghost) out += ghostParens(p.cx, p.cy);
+            out += headShape(p.cx, p.cy, p.head.head, open, p.head.ghost);
+            if (ev.dur.dotted) {
+              out += '<circle cx="' + (p.cx + 11.5) + '" cy="' + (p.head.step % 2 === 0 ? p.cy - 2.5 : p.cy) + '" r="1.7" fill="currentColor"/>';
+            }
+            out += "</g>";
+          });
+          out += "</g>";
+          return out;
+        }
+        function renderLayer(events) {
+          var out = "";
+          events.forEach(function (ev, idx) {
+            out += ev.kind === "rest" ? "<g>" + restGlyph(ev) + "</g>" : renderNote(ev, events[idx + 1]);
+          });
+          return out;
+        }
+        function renderBeams() {
+          var out = "";
+          beamGroups.forEach(function (group) {
+            var isUp = group.layer === "up";
+            var firstEv = group.events[0];
+            var lastEv = group.events[group.events.length - 1];
+            if (!firstEv || !lastEv) return;
+            var x1 = stemXFor(firstEv);
+            var x2 = stemXFor(lastEv);
+            var primaryY = isUp ? group.beamY : group.beamY - 5;
+            var secondY = isUp ? group.beamY + 9 : group.beamY - 14;
+            var secondSegs = "";
+            group.events.forEach(function (ev, idx) {
+              var nextEv = group.events[idx + 1];
+              if (ev.dur.flags < 2 && (!nextEv || nextEv.dur.flags < 2)) return;
+              var sx = stemXFor(ev);
+              if (ev.dur.flags >= 2 && nextEv && nextEv.dur.flags >= 2) {
+                secondSegs += '<rect x="' + sx + '" y="' + secondY + '" width="' + (stemXFor(nextEv) - sx) + '" height="4.2" fill="currentColor"/>';
+              } else if (ev.dur.flags >= 2) {
+                var stubLen = 11;
+                var fromLeft = idx === 0;
+                secondSegs += '<rect x="' + (fromLeft ? sx : sx - stubLen) + '" y="' + secondY + '" width="' + stubLen + '" height="4.2" fill="currentColor"/>';
+              }
+            });
+            out += "<g>" + '<rect x="' + x1 + '" y="' + primaryY + '" width="' + Math.max(1.5, x2 - x1) + '" height="5" fill="currentColor"/>' + secondSegs + "</g>";
+          });
+          return out;
+        }
+
+        var numerator = Number.isInteger(totalBeats) ? totalBeats : pattern.beats;
+        var subdivisionLabel = sub === 1 ? "quarter-note grid" : sub === 2 ? "8th-note grid" : sub === 3 ? "triplet grid" : "16th-note grid";
+        var svg = "";
+        svg += '<svg viewBox="0 0 ' + width + ' ' + height + '" width="' + width + '" height="' + height + '" role="img" aria-label="Drum notation for ' + escHtml(pattern.name || "this pattern") + " in " + numerator + '/4">';
+        for (var li = 0; li < 5; li++) {
+          svg += '<line x1="10" x2="' + (width - 10) + '" y1="' + (staffTop + li * lineGap) + '" y2="' + (staffTop + li * lineGap) + '" stroke="currentColor" stroke-width="1" opacity="0.75"/>';
+        }
+        // Percussion clef: two vertical bars.
+        svg += '<rect x="15" y="' + (staffTop + 3) + '" width="5" height="' + (lineGap * 4 - 6) + '" fill="currentColor" opacity="0.85"/>';
+        svg += '<rect x="24" y="' + (staffTop + 3) + '" width="5" height="' + (lineGap * 4 - 6) + '" fill="currentColor" opacity="0.85"/>';
+        svg += '<text x="46" y="' + (staffTop + 19) + '" text-anchor="middle" font-size="21" font-weight="700" fill="currentColor" style="font-family: Georgia, \'Times New Roman\', serif">' + numerator + "</text>";
+        svg += '<text x="46" y="' + (staffTop + 39) + '" text-anchor="middle" font-size="21" font-weight="700" fill="currentColor" style="font-family: Georgia, \'Times New Roman\', serif">4</text>';
+        // Final barline.
+        svg += '<line x1="' + (width - 15) + '" x2="' + (width - 15) + '" y1="' + staffTop + '" y2="' + staffBottom + '" stroke="currentColor" stroke-width="1.1"/>';
+        svg += '<rect x="' + (width - 12) + '" y="' + staffTop + '" width="3.6" height="' + (lineGap * 4) + '" fill="currentColor"/>';
+        // Whole-measure rests for layers with no hits.
+        if (upEvents.length === 0) {
+          svg += '<rect x="' + (centerX(0, totalSlots) - 7) + '" y="' + yForStep(6) + '" width="14" height="5" fill="currentColor" opacity="0.85"/>';
+        }
+        if (downEvents.length === 0 && upEvents.length > 0) {
+          svg += '<rect x="' + (centerX(0, totalSlots) - 7) + '" y="' + yForStep(2) + '" width="14" height="5" fill="currentColor" opacity="0.55"/>';
+        }
+        svg += renderLayer(upEvents);
+        svg += renderLayer(downEvents);
+        svg += renderBeams();
+        tupletMarks.forEach(function (m) {
+          svg += '<text x="' + m.x + '" y="' + m.y + '" text-anchor="middle" font-size="12" font-weight="700" font-style="italic" fill="currentColor" style="font-family: Georgia, \'Times New Roman\', serif">3</text>';
+        });
+        svg += "</svg>";
+        return { svg: svg, numerator: numerator, subdivisionLabel: subdivisionLabel };
+      }
+      function closeNotation() {
+        var m = document.querySelector(".notation-backdrop");
+        if (m) m.remove();
+      }
+      function openNotation() {
+        closeNotation();
+        closeAbout();
+        var built = buildNotation();
+        var backdrop = document.createElement("div");
+        backdrop.className = "modal-backdrop notation-backdrop";
+        var modal = document.createElement("div");
+        modal.className = "modal wide";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("aria-label", "Standard notation");
+        var keyItems = pattern.rows.map(function (label, r) {
+          var spec = staffSpecForRow(label, r);
+          return "<li><b>" + escHtml(label) + "</b> — " + (spec.head === "x" ? "× notehead" : "round notehead") + ", " + staffPositionName(spec.step) + ", stem " + spec.stem + (spec.matched ? "" : " (placed by row order)") + "</li>";
+        }).join("");
+        var empty = hitCount() === 0;
+        modal.innerHTML =
+          '<div class="modal-head"><div><h2>Standard notation</h2>' +
+          '<p class="sub">' + escHtml(pattern.name || "Untitled beat") + " · " + built.numerator + "/4 · " + built.subdivisionLabel + " · read-only</p></div>" +
+          '<button type="button" class="modal-close" aria-label="Close notation">×</button></div>' +
+          '<div class="notation-wrap">' + built.svg + "</div>" +
+          (empty
+            ? "<p>No hits yet — paint some cells in the grid and this staff will show the beat as you build it.</p>"
+            : "<p>Note values are worked out from the spacing between hits in each stem layer: a note lasts until the next hit in the same layer — or the end of the measure — so one beat can hold mixed values, like an 8th note followed by two 16ths. Stems up are the hands, stems down are the feet. Non-solid fills are shown as ghost notes, in parentheses.</p>") +
+          "<h3>Drum key</h3>" +
+          '<ul class="key-list">' + keyItems + "</ul>" +
+          '<button type="button" class="done-btn">Done</button>';
+        backdrop.appendChild(modal);
+        shell.appendChild(backdrop);
+        backdrop.addEventListener("click", function (e) { if (e.target === backdrop) closeNotation(); });
+        modal.querySelector(".modal-close").addEventListener("click", closeNotation);
+        modal.querySelector(".done-btn").addEventListener("click", closeNotation);
+      }
+      document.getElementById("notationBtn").addEventListener("click", openNotation);
+
       /* ── About popup ── */
       var aboutBtn = document.getElementById("aboutBtn");
       function closeAbout() { var m = document.querySelector(".modal-backdrop"); if (m) m.remove(); }
@@ -806,7 +1333,7 @@
         setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
       }
       function openAbout() {
-        closeAbout();
+        closeAbout(); closeNotation();
         var backdrop = document.createElement("div");
         backdrop.className = "modal-backdrop";
         var modal = document.createElement("div");
@@ -819,6 +1346,8 @@
           '<p>Pick a fill, then tap — or drag across — cells to paint. Tap a cell again with that same fill selected and it erases; pick a different fill and tap to overwrite what’s already there.</p>' +
           '<p>Hits stay on their beat when you change the subdivision — new columns open up between the beats instead of pushing your hits sideways. A hit only disappears if its exact spot doesn’t exist in the new division (like the “&amp;” going back to plain beats). You can still tap any column or row label to rename it.</p>' +
           '<p>Press Play and a playhead steps across the columns at your tempo, looping the measure. Each row plays its General MIDI drum voice — snare, bass drum, hi-hat, toms, cymbals — matched from the row’s name; rename a row and its sound follows. Solid hits play full, the patterned fills play softer, like ghost notes. A voice name with no GM match gets a simple synthesized hit.</p>' +
+          '<p>Tap Notation to see the beat you’ve built written out in standard drum notation — a read-only staff that works out each note’s value from the spacing between hits, so a beat can mix an 8th note with two 16ths. Editing still happens here in the grid.</p>' +
+          '<p>Each fill has its own colour as well as its own pattern — solid red, lined orange, dotted green, cross blue, and rings purple on a black background — so fills can be told apart by pattern alone, by colour alone, or by both. The playhead is a translucent white highlight so it never clashes with a fill underneath it.</p>' +
           '<p>Read the grid left to right: each column is a moment in the measure, each row is one part of the kit. The five fills — solid, lined, dotted, cross, and rings — can mark full hits, ghost notes, accents, or whatever they mean in your beat. Adding more beats or voices never scrolls the grid sideways: the whole table shrinks to stay on one screen.</p>' +
           '<p>This is the standalone build: one single HTML file with no server behind it. Your pattern saves in this browser’s local storage on this device. To publish it, put this file in a GitHub repository as <span class="mono">index.html</span> and enable GitHub Pages — or just open the file in any browser.</p>' +
           '<p class="small">Playback sounds: the Standard drum kit from TimGM6mb, a small complete General MIDI soundfont by Tim Brechbill and David Bolton, licensed under the GNU General Public License v2 — the same license that ships with the font in Debian/Ubuntu’s timgm6mb-soundfont package. Only the drum kit is embedded (about 66 KB of audio), to keep the app lightweight.</p>' +
@@ -835,7 +1364,14 @@
         modal.querySelector(".done-btn").addEventListener("click", closeAbout);
         modal.querySelector("#dlApp").addEventListener("click", function () {
           closeAbout();
-          var html = "<!doctype html>\n" + document.documentElement.outerHTML;
+          var clone = document.documentElement.cloneNode(true);
+          var cGrid = clone.querySelector("#grid"); if (cGrid) cGrid.innerHTML = "";
+          var cPal = clone.querySelector("#paletteTools"); if (cPal) cPal.innerHTML = "";
+          var cSeg = clone.querySelector("#subSeg"); if (cSeg) cSeg.innerHTML = "";
+          var cName = clone.querySelector("#patternName"); if (cName) cName.removeAttribute("value");
+          var cBackdrops = clone.querySelectorAll(".modal-backdrop");
+          Array.prototype.forEach.call(cBackdrops, function (b) { b.remove(); });
+          var html = "<!doctype html>\n" + clone.outerHTML;
           downloadFile("index.html", html, "text/html");
         });
         modal.querySelector("#dlPattern").addEventListener("click", function () {
@@ -867,7 +1403,7 @@
         });
       }
       aboutBtn.addEventListener("click", openAbout);
-      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAbout(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeAbout(); closeNotation(); } });
 
       render();
       renderPlayButton();
